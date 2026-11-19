@@ -90,7 +90,8 @@ html[data-depth='detailed'] .d-short, html[data-depth='detailed'] .d-mid { displ
 .topbar-inner { max-width: 1320px; height: 100%; margin: 0 auto; padding: 0 28px; display: flex; align-items: center; gap: 20px; }
 .logo { display: flex; align-items: center; gap: 9px; text-decoration: none; color: var(--fg); font-weight: 700; font-size: 16px; letter-spacing: -0.02em; white-space: nowrap; }
 .topnav { display: flex; align-items: center; gap: 22px; margin-left: auto; font-size: 14px; }
-.topnav a { text-decoration: none; color: var(--fg); font-weight: 500; }
+.topnav a { text-decoration: none; color: var(--muted); font-weight: 500; }
+.topnav a[aria-current='page'] { color: var(--fg); }
 .topnav a:hover { color: var(--muted); }
 .topnav .soon { color: var(--faint); display: inline-flex; align-items: center; gap: 6px; cursor: default; }
 .topnav .soon small { font-size: 10px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; border: 1px solid var(--border); border-radius: 5px; padding: 0 4px; }
@@ -159,6 +160,11 @@ html[data-depth='detailed'] .d-short, html[data-depth='detailed'] .d-mid { displ
 .mk-look .mk-dot { fill: var(--look); }
 .mk-num { fill: #fff; font-weight: 800; font-family: var(--font); }
 
+/* phone screenshots: narrow, with the numbered list beside them */
+.shot-pair { display: grid; grid-template-columns: minmax(0, 340px) minmax(0, 1fr); gap: 32px; align-items: start; }
+.shot-pair .marks { margin-top: 0; }
+.shot-phone .shot-frame { border-radius: 22px; border-width: 6px; border-color: var(--bg-soft); outline: 1px solid var(--border); }
+
 /* numbered marks list */
 .marks { list-style: none; padding: 0; margin: 18px 0 0; display: grid; gap: 2px; }
 .marks li { display: grid; grid-template-columns: 24px 1fr auto; align-items: center; gap: 12px; padding: 7px 0; border-bottom: 1px solid var(--border); font-size: 14px; color: var(--fg); }
@@ -199,6 +205,7 @@ html[data-depth='detailed'] .d-short, html[data-depth='detailed'] .d-mid { displ
 .card { display: flex; flex-direction: column; height: 100%; background: var(--card); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; text-decoration: none; transition: border-color .15s, box-shadow .15s; }
 .card:hover { border-color: var(--rule); box-shadow: var(--shadow); }
 .card img { aspect-ratio: 16 / 10; object-fit: cover; object-position: top left; border-bottom: 1px solid var(--border); filter: var(--shot-filter); }
+.card-phone img { object-fit: contain; object-position: top center; background: var(--bg-soft); padding: 10px 0 0; }
 .card-title { color: var(--fg); font-weight: 600; font-size: 14px; padding: 12px 14px 2px; }
 .card-text { font-size: 13px; color: var(--muted); padding: 0 14px 14px; line-height: 1.5; }
 
@@ -215,7 +222,9 @@ html[data-depth='detailed'] .d-short, html[data-depth='detailed'] .d-mid { displ
   .search { order: 5; width: 100%; }
   .topnav { gap: 14px; }
   .topnav .soon { display: none; }
-  .top-actions { padding-left: 10px; }
+  .topnav { gap: 12px; font-size: 13.5px; }
+  .logo { font-size: 15px; }
+  .top-actions { padding-left: 0; border-left: 0; margin-right: -6px; }
   html { scroll-padding-top: 120px; }
   .docs { grid-template-columns: 1fr; }
   .sidebar { border-right: 0; border-bottom: 1px solid var(--border); }
@@ -230,6 +239,9 @@ html[data-depth='detailed'] .d-short, html[data-depth='detailed'] .d-mid { displ
   .content h1 { font-size: 24px; }
   .shot-full { display: none; }
   .shot-crop { display: block; }
+  .shot-phone .shot-full { display: block; }
+  .shot-pair { grid-template-columns: 1fr; gap: 16px; }
+  .shot-pair .shot { max-width: 320px; margin: 0 auto; }
   .pager a { max-width: none; flex: 1; }
 }
 @media (prefers-reduced-motion: reduce) { .card { transition: none; } }

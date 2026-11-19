@@ -205,6 +205,38 @@ const fixtures = [
   ]],
 ];
 
+
+// ---- customer portal (signed in as Priya Jha) and walled-garden pay page ----
+const ME_SUB = SUBS[3];
+const portalPlan = (p, current) => ({ id: p.id, name: p.name, description: p.description, downloadKbps: p.downloadKbps, uploadKbps: p.uploadKbps, dataCapBytes: p.dataCapBytes, validityDays: 30, pricePaise: Math.round(p.pricePaise * 1.18 / 100) * 100, current });
+const PORTAL_INVOICES = [0, 1, 2, 3, 4].map((i) => {
+  const total = Math.round(PLANS[1].pricePaise * 1.18 / 100) * 100;
+  const taxable = Math.round(total / 1.18);
+  return { id: oid(5000 + i), number: `LNP/26-27/${String(812 - i * 37).padStart(5, '0')}`, type: 'prepaid_recharge', subscriber: { id: ME_SUB.id, name: ME_SUB.name, customerNo: ME_SUB.customerNo }, issueDate: at(-29 - i * 30), dueDate: at(-29 - i * 30), periodStart: at(-29 - i * 30), periodEnd: at(1 - i * 30), taxablePaise: taxable, cgstPaise: Math.round((total - taxable) / 2), sgstPaise: total - taxable - Math.round((total - taxable) / 2), igstPaise: 0, roundOffPaise: 0, totalPaise: total, paidPaise: total, creditedPaise: 0, balancePaise: 0, status: 'paid' };
+});
+fixtures.push(
+  ['GET', '/api/v1/portal/me', () => ({ name: ME_SUB.name, customerNo: ME_SUB.customerNo, username: ME_SUB.username, phone: ME_SUB.phone, email: null, city: 'Darbhanga', billingType: 'prepaid', status: 'active', expired: false, suspendReason: null, expiresAt: ME_SUB.expiresAt, plan: portalPlan(PLANS[1], true), dueInvoices: 0, duePaise: 0, gateways: ['razorpay'], hasPortalPassword: false, isp: { name: 'Mithila Fibernet', phone: '+91 6272 241 500', email: 'help@mithilafiber.in' }, branding: { name: 'Laheriasarai Net Point', logoUrl: null, fromResellerId: L1.id } })],
+  ['GET', '/api/v1/portal/plans', () => ({ items: PLANS.map((p, i) => portalPlan(p, i === 1)) })],
+  ['GET', '/api/v1/portal/usage', () => ({
+    days: Array.from({ length: 31 }, (_, i) => ({ day: at(i - 30).slice(0, 10), downloadBytes: Math.round((3 + ((i * 7) % 9) + (i % 7 >= 5 ? 6 : 0)) * 1e9), uploadBytes: Math.round((0.3 + ((i * 3) % 5) * 0.1) * 1e9), sessionSecs: 20000 + ((i * 977) % 50000) })),
+    cycle: { start: at(-29).slice(0, 10), usedBytes: 2.41e11, capBytes: null, fupActive: false },
+  })],
+  ['GET', '/api/v1/portal/sessions', () => ({ items: Array.from({ length: 6 }, (_, i) => ({ start: at(-i, -9 - i), stop: i ? at(-i, -1 - i) : null, ip: `100.64.3.${22 + i}`, uploadBytes: 3.1e8 + i * 4e7, downloadBytes: 6.4e9 - i * 7e8, online: i === 0 })) })],
+  ['GET', '/api/v1/portal/invoices', () => list(PORTAL_INVOICES)],
+  ['GET', '/api/v1/portal/payments', () => list(PORTAL_INVOICES.map((inv, i) => ({ id: oid(5100 + i), subscriber: inv.subscriber, method: i === 2 ? 'cash' : 'razorpay', amountPaise: inv.totalPaise, status: 'captured', purpose: { type: 'recharge', planId: PLANS[1].id, invoiceId: null }, linkUrl: null, gatewayPaymentId: i === 2 ? null : `pay_N${8123 + i}QxZ`, receiptNo: `RC-${88400 - i * 41}`, failureReason: null, rechargeId: oid(5200 + i), invoiceId: inv.id, capturedAt: inv.issueDate, createdAt: inv.issueDate })))],
+  ['GET', '/api/v1/portal/tickets', () => list([
+    { ...TICKETS[3], status: 'in_progress', subject: 'Speed drops after 9 pm', category: 'slow_speed', priority: 'normal', source: 'portal' },
+    { ...TICKETS[2], subject: 'Router light was red', category: 'no_internet', status: 'resolved', source: 'portal', createdAt: at(-21), lastActivityAt: at(-20) },
+  ])],
+  ['GET', /^\/api\/v1\/portal\/tickets\/([0-9a-f]{24})$/, () => ({ ...TICKETS[3], status: 'waiting_customer', subject: 'Speed drops after 9 pm', category: 'slow_speed', priority: 'normal', source: 'portal', events: [
+    { id: oid(960), kind: 'message', body: 'Every night after 9 pm the speed falls to 2-3 Mbps. Morning it is fine.', from: null, to: null, author: { type: 'customer', id: ME_SUB.id, name: ME_SUB.name }, createdAt: at(-1, -14) },
+    { id: oid(961), kind: 'message', body: 'Thanks Priya. We changed your line to a less busy port. Please restart your router once and tell us if it is better tonight.', from: null, to: null, author: { type: 'user', id: ME_ID, name: 'Laheriasarai Net Point' }, createdAt: at(-1, -3) },
+  ] })],
+  ['GET', '/api/v1/portal/kyc', () => ({ status: 'pending', documents: [{ id: oid(970), kind: 'aadhaar', mimeType: 'image/jpeg', sizeBytes: 812000, fileName: 'aadhaar-front.jpg', maskedNumber: 'XXXX XXXX 4471', uploadedVia: 'reseller', createdAt: at(-180) }], missing: ['photo'] })],
+  ['GET', '/api/v1/portal/privacy', () => ({ text: 'We keep your name, address and ID only to provide your connection, as required by DoT rules.', version: 39, acceptedVersion: 39, acceptedAt: at(-17), needsConsent: false })],
+  ['GET', '/api/v1/pay/context', (q) => ({ isp: { name: 'Mithila Fibernet', phone: '+91 6272 241 500' }, online: true, subscriber: q.get('t') === 'unknown' ? null : { name: 'Ar*f Kh*n', customerNo: SUBS[2].customerNo, username: 'arif.kdr', expired: true, expiresAt: SUBS[2].expiresAt, plan: { name: PLANS[2].name, downloadKbps: PLANS[2].downloadKbps, uploadKbps: PLANS[2].uploadKbps, validityDays: 30, pricePaise: Math.round(PLANS[2].pricePaise * 1.18 / 100) * 100 } }, t: q.get('t') ?? 'demo' })],
+);
+
 const reportSamples = (name) => ({ name, rows: [], columns: [] });
 
 function handle(method, path, q, body) {
@@ -243,6 +275,10 @@ createServer((req, res) => {
   req.on('end', () => {
     let parsed = null;
     try { parsed = body ? JSON.parse(body) : null; } catch {}
+    if (url.pathname === '/api/v1/portal/auth/login') {
+      res.writeHead(200, { 'content-type': 'application/json', 'set-cookie': ['isp_pt=demo; Path=/', 'isp_pcsrf=demo; Path=/'] });
+      return res.end(JSON.stringify({ ok: true }));
+    }
     if (url.pathname === '/api/v1/auth/login' || url.pathname === '/api/v1/auth/refresh') {
       res.writeHead(200, { 'content-type': 'application/json', 'set-cookie': ['isp_at=demo; Path=/', 'isp_csrf=demo; Path=/'] });
       return res.end(JSON.stringify({ ok: true, mfa: 'ok' }));

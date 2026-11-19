@@ -53,16 +53,18 @@ function Overlay({ shot, id, scale = 1 }: { shot: ShotData; id: string; scale?: 
 export function Shot({ shot, labels, title, priority }: Props) {
   const { width: W, height: H } = shot;
   const key = shot.src.replace(/\W/g, '');
-  const crop = cropOf(shot);
   const alt = `${title}: ${labels.map((l, i) => `${i + 1}. ${l}`).join(', ')}`;
+  const phone = W < 600;
+  const crop = phone ? null : cropOf(shot);
   return (
-    <figure className="shot">
+    <figure className={phone ? 'shot shot-phone' : 'shot'}>
       <a className="shot-frame shot-full" href={shot.src} target="_blank" rel="noopener" aria-label={`Open full-size screenshot: ${title}`}>
         <img src={shot.src} width={W} height={H} alt={alt} loading={priority ? 'eager' : 'lazy'} fetchPriority={priority ? 'high' : 'auto'} decoding="async" />
         <svg viewBox={`0 0 ${W} ${H}`} className="shot-overlay" aria-hidden="true">
           <Overlay shot={shot} id={`f-${key}`} />
         </svg>
       </a>
+      {crop ? (
       <a className="shot-frame shot-crop" href={shot.src} target="_blank" rel="noopener" aria-label={`Open full screen: ${title}`}>
         <svg viewBox={`${crop.x} ${crop.y} ${crop.w} ${crop.h}`} role="img" aria-label={alt} style={{ aspectRatio: `${crop.w} / ${crop.h}` }}>
           <image href={shot.src} width={W} height={H} />
@@ -70,6 +72,7 @@ export function Shot({ shot, labels, title, priority }: Props) {
         </svg>
         <span className="crop-hint">Tap to see the whole screen</span>
       </a>
+      ) : null}
     </figure>
   );
 }
@@ -84,7 +87,7 @@ export function MarkList({ shot, labels }: { shot: ShotData; labels: string[] })
             {m.n}
           </span>
           <span className="marks-label">{labels[m.n - 1]}</span>
-          <span className="marks-kind">{m.kind === 'click' ? 'Click or type' : 'Look here'}</span>
+          <span className="marks-kind">{m.kind === 'click' ? (shot.width < 600 ? 'Tap or type' : 'Click or type') : 'Look here'}</span>
         </li>
       ))}
     </ol>

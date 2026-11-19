@@ -1,16 +1,30 @@
-// Usage: node capture.mjs [topicId…]   (BASE_URL defaults to http://localhost:3000)
+// Usage: node capture.mjs [--audience reseller|customer|all] [topicId…]   (BASE_URL defaults to http://localhost:3000)
 import { chromium } from 'playwright-core';
 import sharp from 'sharp';
 import { mkdirSync, readFileSync, writeFileSync, existsSync } from 'node:fs';
-import topics from './topics.reseller.mjs';
 
 const BASE = process.env.BASE_URL ?? 'http://localhost:3000';
 const OUT_IMG = new URL('../site/public/shots/', import.meta.url).pathname;
 const OUT_JSON = new URL('../site/content/shots.json', import.meta.url).pathname;
-const W = 1440, H = 900, DPR = 2;
+const DEVICES = {
+  desktop: { width: 1440, height: 900, mobile: false },
+  phone: { width: 390, height: 844, mobile: true },
+};
+const DPR = 2;
 mkdirSync(OUT_IMG, { recursive: true });
 
-const only = new Set(process.argv.slice(2));
+const args = process.argv.slice(2);
+const ai = args.indexOf('--audience');
+const which = ai >= 0 ? args.splice(ai, 2)[1] : 'all';
+const AUDIENCES = ['reseller', 'customer'];
+const topics = [];
+for (const a of which === 'all' ? AUDIENCES : [which]) topics.push(...(await import(`./topics.${a}.mjs`)).default);
+const only = new Set(args);
+const COOKIES = {
+  staff: [{ name: 'isp_csrf', value: 'demo' }, { name: 'isp_at', value: 'demo' }],
+  customer: [{ name: 'isp_pcsrf', value: 'demo' }, { name: 'isp_pt', value: 'demo' }],
+  none: [],
+};
 const db = existsSync(OUT_JSON) ? JSON.parse(readFileSync(OUT_JSON, 'utf8')) : {};
 const browser = await chromium.launch({ executablePath: process.env.CHROME ?? '/usr/bin/google-chrome', args: ['--no-sandbox'] });
 
@@ -33,12 +47,15 @@ async function boxOf(loc, mode) {
 let failed = 0;
 for (const t of topics) {
   if (only.size && !only.has(t.id)) continue;
-  const ctx = await browser.newContext({ viewport: { width: W, height: t.height ?? H }, deviceScaleFactor: DPR, reducedMotion: 'reduce', locale: 'en-IN', timezoneId: 'Asia/Kolkata' });
-  if (!t.signedOut) await ctx.addCookies([{ name: 'isp_csrf', value: 'demo', url: BASE }, { name: 'isp_at', value: 'demo', url: BASE }]);
+  const dev = DEVICES[t.device ?? 'desktop'];
+  const W = dev.width, H = t.height ?? dev.height;
+  const ctx = await browser.newContext({ viewport: { width: W, height: H }, deviceScaleFactor: DPR, isMobile: dev.mobile, hasTouch: dev.mobile, reducedMotion: 'reduce', locale: 'en-IN', timezoneId: 'Asia/Kolkata' });
+  const session = t.signedOut ? 'none' : (t.session ?? 'staff');
+  await ctx.addCookies(COOKIES[session].map((c) => ({ ...c, url: BASE })));
   const p = await ctx.newPage();
   try {
     await p.goto(BASE + t.open, { waitUntil: 'networkidle' });
-    await p.addStyleTag({ content: '*,*::before,*::after{transition:none!important;animation:none!important;caret-color:transparent!important}' });
+    await p.addStyleTag({ content: 'html{scroll-behavior:auto!important}*,*::before,*::after{transition:none!important;animation:none!important;caret-color:transparent!important}' });
     await p.waitForTimeout(500);
     if (t.prepare) await t.prepare(p);
     if (t.scrollTo) { await t.scrollTo(p).scrollIntoViewIfNeeded(); await p.evaluate(() => window.scrollBy(0, -24)); }
@@ -52,7 +69,7 @@ for (const t of topics) {
     }
     const png = await p.screenshot({ animations: 'disabled' });
     await sharp(png).webp({ quality: 80 }).toFile(`${OUT_IMG}${t.id}.webp`);
-    db[t.id] = { src: `/shots/${t.id}.webp`, width: W, height: t.height ?? H, marks, capturedAt: new Date().toISOString() };
+    db[t.id] = { src: `/shots/${t.id}.webp`, width: W, height: H, marks, capturedAt: new Date().toISOString() };
     console.log('ok  ', t.id, marks.length, 'marks');
   } catch (e) {
     failed++;

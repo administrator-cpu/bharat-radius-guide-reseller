@@ -67,7 +67,9 @@ export function Search({ index }: { index: SearchEntry[] }) {
               <li key={e.a + e.id}>
                 <Link href={`/${e.a}/${e.id}/`} onClick={() => setOpen(false)}>
                   <span className="sr-title">{e.title}</span>
-                  <span className="sr-section">{e.section}</span>
+                  <span className="sr-section">
+                    {e.audience} · {e.section}
+                  </span>
                 </Link>
               </li>
             ))

@@ -5,7 +5,7 @@ import { Prose } from '@/components/Prose';
 import { MarkList, Shot } from '@/components/Shot';
 import { Sidebar } from '@/components/Sidebar';
 import { Toc, type TocItem } from '@/components/Toc';
-import { AUDIENCES, audience, flatTopics, neighbours, shotFor } from '@/lib/content';
+import { AUDIENCES, audience, flatTopics, isPhone, neighbours, shotFor } from '@/lib/content';
 
 type Params = { params: Promise<{ audience: string; topic: string }> };
 
@@ -48,10 +48,10 @@ export default async function TopicPage({ params }: Params) {
         <section id="where-to-click" aria-labelledby="h-where">
           <h2 id="h-where">Where to click</h2>
           {shot ? (
-            <>
+            <div className={isPhone(shot) ? 'shot-pair' : undefined}>
               <Shot shot={shot} labels={t.marks} title={t.title} priority />
               <MarkList shot={shot} labels={t.marks} />
-            </>
+            </div>
           ) : null}
         </section>
 

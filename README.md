@@ -1,6 +1,6 @@
-# Bharat Radius Guide — Reseller
+# Bharat Radius Guide
 
-User guide for the Bharat Radius panel. Every topic has a real screenshot with numbered marks
+User guide for Bharat Radius: the **Reseller** panel and the **Customer** portal (plus the expired-plan pay page). Every topic has a real screenshot with numbered marks
 (orange = click/type, dashed blue = look here), a direct heading, and three lengths of explanation
 the reader switches between at the top: **Short** (10–20 words), **Mid** (20–70), **Detailed** (70–500).
 
@@ -26,7 +26,7 @@ The site is fully static (`output: 'export'`): no server, no database, served fr
 
 ## Edit text
 
-All copy lives in `site/content/reseller.ts`. Each topic:
+Copy lives in `site/content/reseller.ts` and `site/content/customer.ts`. Each topic:
 
 | field | what it is |
 |---|---|
@@ -50,25 +50,29 @@ API_ORIGIN=http://127.0.0.1:4100 npx next build && npx next start -p 3000 &
 
 # 3. capture (all topics, or name some)
 cd ../../../guide/capture
-node capture.mjs                  # writes site/public/shots/*.webp + site/content/shots.json
-node capture.mjs recharge kyc     # just these
+node capture.mjs                          # every audience → site/public/shots/*.webp + site/content/shots.json
+node capture.mjs --audience customer      # one audience
+node capture.mjs recharge portal-kyc      # just these topics
 node review.mjs                   # optional: contact sheets with marks drawn, in /tmp/review
 ```
 
 If a button is renamed or removed, `capture.mjs` prints `FAIL <topic>` and exits non-zero instead of saving a
-wrong picture. Fix the locator in `capture/topics.reseller.mjs`.
+wrong picture. Fix the locator in `capture/topics.<audience>.mjs`.
 
 `mock/openapi.json` is copied from `apps/web/openapi.json`; copy it again when the API changes.
-Sample data lives in `mock/server.mjs` (fictional ISP "Mithila Fibernet", reseller R-0012).
+Sample data lives in `mock/server.mjs` (fictional ISP "Mithila Fibernet", reseller R-0012, customer Priya Jha C010252).
+
+Topic options in `topics.<audience>.mjs`: `device: 'phone'` (390×844, used for every customer screen),
+`session: 'staff' | 'customer' | 'none'`, `signedOut: true`, `height` for a taller shot.
 
 ## Add a topic
 
-1. Add an entry in `capture/topics.reseller.mjs`: page to `open`, optional `prepare` clicks, `marks` to point at.
-2. Add the copy in `site/content/reseller.ts` with the same `id` and one `marks` label per mark.
+1. Add an entry in `capture/topics.<audience>.mjs`: page to `open`, optional `prepare` clicks, `marks` to point at.
+2. Add the copy in `site/content/<audience>.ts` with the same `id` (unique across all audiences) and one `marks` label per mark.
 3. `node capture.mjs <id>` then `npm run check`.
 
 ## Next audiences
 
-`site/lib/content.ts` already lists *ISP Admin & Staff* and *Customer* (shown as "soon"). Add
-`content/admin.ts` + `capture/topics.admin.mjs` (with a staff `/auth/me` in the mock), set `ready: true`.
+`site/lib/content.ts` lists *ISP Admin & Staff* as "soon". Add `content/admin.ts` + `capture/topics.admin.mjs`
+(with an ISP-admin `/auth/me` in the mock), add `'admin'` to `AUDIENCES` in `capture.mjs`, set `ready: true`.
 The same `content/*.ts` files are the knowledge base for the planned AI help chat.

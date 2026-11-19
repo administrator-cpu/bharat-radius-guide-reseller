@@ -1,7 +1,12 @@
 import Link from 'next/link';
 import { Sidebar } from '@/components/Sidebar';
 import { Toc } from '@/components/Toc';
-import { shotFor, type Audience } from '@/lib/content';
+import { isPhone, shotFor, type Audience } from '@/lib/content';
+
+const INTRO: Record<string, { title: string; lead: string }> = {
+  reseller: { title: 'Bharat Radius for resellers', lead: 'Run your customers, wallet and sub-resellers from one panel.' },
+  customer: { title: 'Your internet account', lead: 'Recharge, check your data and get help from your phone.' },
+};
 
 /** Landing page for one audience: intro plus every topic as a card, grouped by section. */
 export function GuideHome({ a }: { a: Audience }) {
@@ -13,10 +18,11 @@ export function GuideHome({ a }: { a: Audience }) {
         <div className="content-head">
           <p className="crumb">{a.label} guide</p>
         </div>
-        <h1>Bharat Radius for {a.label.toLowerCase()}s</h1>
+        <h1>{INTRO[a.id]?.title ?? `${a.label} guide`}</h1>
         <p className="lead">
-          Every page shows the real screen with numbered marks on exactly what to click. Choose <strong>Short</strong>,{' '}
-          <strong>Mid</strong> or <strong>Detailed</strong> on any page to read as much as you need.
+          {INTRO[a.id]?.lead} Every page shows the real screen with numbered marks on exactly what to tap. Choose{' '}
+          <strong>Short</strong>, <strong>Mid</strong> or <strong>Detailed</strong> on any page to read as much as you
+          need.
         </p>
         <p>
           <Link className="cta" href={`/${a.id}/${first.id}/`}>
@@ -32,7 +38,7 @@ export function GuideHome({ a }: { a: Audience }) {
                 const shot = shotFor(t.id);
                 return (
                   <li key={t.id}>
-                    <Link href={`/${a.id}/${t.id}/`} className="card">
+                    <Link href={`/${a.id}/${t.id}/`} className={shot && isPhone(shot) ? 'card card-phone' : 'card'}>
                       {shot ? <img src={shot.src} alt="" width={shot.width} height={shot.height} loading="lazy" decoding="async" /> : null}
                       <span className="card-title">{t.title}</span>
                       <span className="card-text">{t.short}</span>

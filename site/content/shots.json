@@ -654,5 +654,373 @@
       }
     ],
     "capturedAt": "2026-11-19T19:37:08.581Z"
+  },
+  "portal-sign-in": {
+    "src": "/shots/portal-sign-in.webp",
+    "width": 390,
+    "height": 844,
+    "marks": [
+      {
+        "n": 1,
+        "kind": "click",
+        "x": 18,
+        "y": 408.34375,
+        "w": 354,
+        "h": 64
+      },
+      {
+        "n": 2,
+        "kind": "click",
+        "x": 18,
+        "y": 526.34375,
+        "w": 354,
+        "h": 64
+      },
+      {
+        "n": 3,
+        "kind": "click",
+        "x": 18,
+        "y": 620.34375,
+        "w": 354,
+        "h": 68
+      }
+    ],
+    "capturedAt": "2026-11-19T21:07:37.480Z"
+  },
+  "portal-home": {
+    "src": "/shots/portal-home.webp",
+    "width": 390,
+    "height": 844,
+    "marks": [
+      {
+        "n": 1,
+        "kind": "look",
+        "x": 121.59375,
+        "y": 135,
+        "w": 146.8125,
+        "h": 38
+      },
+      {
+        "n": 2,
+        "kind": "look",
+        "x": 91,
+        "y": 205.5,
+        "w": 208,
+        "h": 208
+      },
+      {
+        "n": 3,
+        "kind": "look",
+        "x": 104.625,
+        "y": 415.5,
+        "w": 180.75,
+        "h": 36
+      }
+    ],
+    "capturedAt": "2026-11-19T21:07:39.589Z"
+  },
+  "portal-recharge": {
+    "src": "/shots/portal-recharge.webp",
+    "width": 390,
+    "height": 844,
+    "marks": [
+      {
+        "n": 1,
+        "kind": "click",
+        "x": 31,
+        "y": 453.5,
+        "w": 328,
+        "h": 72
+      },
+      {
+        "n": 2,
+        "kind": "look",
+        "x": 10,
+        "y": 584.5,
+        "w": 370,
+        "h": 200.5
+      }
+    ],
+    "capturedAt": "2026-11-19T21:07:41.681Z"
+  },
+  "portal-change-plan": {
+    "src": "/shots/portal-change-plan.webp",
+    "width": 390,
+    "height": 844,
+    "marks": [
+      {
+        "n": 1,
+        "kind": "look",
+        "x": 10,
+        "y": 414.5,
+        "w": 370,
+        "h": 95.5
+      },
+      {
+        "n": 2,
+        "kind": "click",
+        "x": 261.828125,
+        "y": 558.5,
+        "w": 99.171875,
+        "h": 56
+      }
+    ],
+    "capturedAt": "2026-11-19T21:08:36.301Z"
+  },
+  "portal-change-plan-confirm": {
+    "src": "/shots/portal-change-plan-confirm.webp",
+    "width": 390,
+    "height": 844,
+    "marks": [
+      {
+        "n": 1,
+        "kind": "look",
+        "x": 19,
+        "y": 660,
+        "w": 320,
+        "h": 92
+      },
+      {
+        "n": 2,
+        "kind": "click",
+        "x": 227.15625,
+        "y": 781,
+        "w": 143.84375,
+        "h": 52
+      }
+    ],
+    "capturedAt": "2026-11-19T21:07:46.003Z"
+  },
+  "pay-page": {
+    "src": "/shots/pay-page.webp",
+    "width": 390,
+    "height": 844,
+    "marks": [
+      {
+        "n": 1,
+        "kind": "look",
+        "x": 35,
+        "y": 262,
+        "w": 320,
+        "h": 162
+      },
+      {
+        "n": 2,
+        "kind": "click",
+        "x": 35,
+        "y": 428,
+        "w": 320,
+        "h": 64
+      }
+    ],
+    "capturedAt": "2026-11-19T21:08:38.226Z"
+  },
+  "portal-usage": {
+    "src": "/shots/portal-usage.webp",
+    "width": 390,
+    "height": 844,
+    "marks": [
+      {
+        "n": 1,
+        "kind": "look",
+        "x": 10,
+        "y": 152.5,
+        "w": 185,
+        "h": 118.5
+      },
+      {
+        "n": 2,
+        "kind": "look",
+        "x": 10,
+        "y": 273,
+        "w": 370,
+        "h": 122
+      },
+      {
+        "n": 3,
+        "kind": "look",
+        "x": 10,
+        "y": 397,
+        "w": 370,
+        "h": 351
+      }
+    ],
+    "capturedAt": "2026-11-19T21:07:50.122Z"
+  },
+  "portal-bills": {
+    "src": "/shots/portal-bills.webp",
+    "width": 390,
+    "height": 844,
+    "marks": [
+      {
+        "n": 1,
+        "kind": "look",
+        "x": 27,
+        "y": 222.5,
+        "w": 336,
+        "h": 56
+      },
+      {
+        "n": 2,
+        "kind": "click",
+        "x": 277.375,
+        "y": 330.5,
+        "w": 85.625,
+        "h": 48
+      }
+    ],
+    "capturedAt": "2026-11-19T21:07:52.531Z"
+  },
+  "portal-report-problem": {
+    "src": "/shots/portal-report-problem.webp",
+    "width": 390,
+    "height": 844,
+    "marks": [
+      {
+        "n": 1,
+        "kind": "click",
+        "x": 27,
+        "y": 233.5,
+        "w": 336,
+        "h": 52
+      },
+      {
+        "n": 2,
+        "kind": "click",
+        "x": 27,
+        "y": 313.5,
+        "w": 336,
+        "h": 52
+      },
+      {
+        "n": 3,
+        "kind": "click",
+        "x": 27,
+        "y": 393.5,
+        "w": 336,
+        "h": 110
+      },
+      {
+        "n": 4,
+        "kind": "click",
+        "x": 27,
+        "y": 529.5,
+        "w": 79.234375,
+        "h": 52
+      }
+    ],
+    "capturedAt": "2026-11-19T21:07:55.404Z"
+  },
+  "portal-ticket-reply": {
+    "src": "/shots/portal-ticket-reply.webp",
+    "width": 390,
+    "height": 844,
+    "marks": [
+      {
+        "n": 1,
+        "kind": "look",
+        "x": 27,
+        "y": 334.5,
+        "w": 287.390625,
+        "h": 165
+      },
+      {
+        "n": 2,
+        "kind": "click",
+        "x": 27,
+        "y": 503.5,
+        "w": 336,
+        "h": 92
+      },
+      {
+        "n": 3,
+        "kind": "click",
+        "x": 283.765625,
+        "y": 593.5,
+        "w": 79.234375,
+        "h": 52
+      },
+      {
+        "n": 4,
+        "kind": "click",
+        "x": 27,
+        "y": 649.5,
+        "w": 257.40625,
+        "h": 48
+      }
+    ],
+    "capturedAt": "2026-11-19T21:07:57.426Z"
+  },
+  "portal-password": {
+    "src": "/shots/portal-password.webp",
+    "width": 390,
+    "height": 844,
+    "marks": [
+      {
+        "n": 1,
+        "kind": "click",
+        "x": 27,
+        "y": 400.96875,
+        "w": 336,
+        "h": 52
+      },
+      {
+        "n": 2,
+        "kind": "click",
+        "x": 27,
+        "y": 480.96875,
+        "w": 336,
+        "h": 52
+      },
+      {
+        "n": 3,
+        "kind": "click",
+        "x": 27,
+        "y": 582.96875,
+        "w": 336,
+        "h": 52
+      },
+      {
+        "n": 4,
+        "kind": "click",
+        "x": 27,
+        "y": 638.96875,
+        "w": 146.5625,
+        "h": 52
+      }
+    ],
+    "capturedAt": "2026-11-19T21:08:40.222Z"
+  },
+  "portal-kyc": {
+    "src": "/shots/portal-kyc.webp",
+    "width": 390,
+    "height": 844,
+    "marks": [
+      {
+        "n": 1,
+        "kind": "look",
+        "x": 27,
+        "y": 159.96875,
+        "w": 336,
+        "h": 32
+      },
+      {
+        "n": 2,
+        "kind": "click",
+        "x": 27,
+        "y": 215.96875,
+        "w": 336,
+        "h": 52
+      },
+      {
+        "n": 3,
+        "kind": "click",
+        "x": 27,
+        "y": 351.96875,
+        "w": 336,
+        "h": 52
+      }
+    ],
+    "capturedAt": "2026-11-19T21:08:42.295Z"
   }
 }

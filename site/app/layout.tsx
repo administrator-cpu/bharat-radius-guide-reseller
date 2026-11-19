@@ -1,9 +1,10 @@
 import type { Metadata, Viewport } from 'next';
 import Link from 'next/link';
+import { AudienceNav } from '@/components/AudienceNav';
 import { Search } from '@/components/Search';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { bootScript } from '@/lib/boot';
-import { AUDIENCES, searchIndex } from '@/lib/content';
+import { AUDIENCES, DEFAULT_AUDIENCE, searchIndex } from '@/lib/content';
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -40,20 +41,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <span>Bharat Radius Guide</span>
             </Link>
             <Search index={index} />
-            <nav className="topnav" aria-label="Who is this for">
-              {AUDIENCES.map((a) =>
-                a.ready ? (
-                  <Link key={a.id} href={`/${a.id}/`}>
-                    {a.label}
-                  </Link>
-                ) : (
-                  <span key={a.id} className="soon" aria-disabled="true" title="Coming soon">
-                    {a.label}
-                    <small>Soon</small>
-                  </span>
-                ),
-              )}
-            </nav>
+            <AudienceNav items={AUDIENCES.map(({ id, label, ready }) => ({ id, label, ready }))} fallback={DEFAULT_AUDIENCE} />
             <div className="top-actions">
               <ThemeToggle />
             </div>
