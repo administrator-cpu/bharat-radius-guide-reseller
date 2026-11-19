@@ -1,7 +1,8 @@
 import type { Metadata, Viewport } from 'next';
 import Link from 'next/link';
-import { DepthToggle, depthBootScript } from '@/components/DepthToggle';
 import { Search } from '@/components/Search';
+import { ThemeToggle } from '@/components/ThemeToggle';
+import { bootScript } from '@/lib/boot';
 import { AUDIENCES, searchIndex } from '@/lib/content';
 import './globals.css';
 
@@ -11,46 +12,55 @@ export const metadata: Metadata = {
   icons: { icon: '/mark.png' },
 };
 
-export const viewport: Viewport = { themeColor: '#15245e', width: 'device-width', initialScale: 1 };
+export const viewport: Viewport = {
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#ffffff' },
+    { media: '(prefers-color-scheme: dark)', color: '#0f0f11' },
+  ],
+  colorScheme: 'light dark',
+  width: 'device-width',
+  initialScale: 1,
+};
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const index = searchIndex();
   return (
     <html lang="en" data-depth="mid" suppressHydrationWarning>
       <head>
-        <script dangerouslySetInnerHTML={{ __html: depthBootScript }} />
+        <script dangerouslySetInnerHTML={{ __html: bootScript }} />
       </head>
       <body>
         <a className="skip" href="#main">
           Skip to content
         </a>
-        <header className="top">
-          <div className="top-inner">
-            <Link href="/" className="brand">
-              <img src="/mark.png" alt="" width={22} height={28} />
-              <span>
-                Bharat Radius <em>Guide</em>
-              </span>
+        <header className="topbar">
+          <div className="topbar-inner">
+            <Link href="/" className="logo">
+              <img src="/mark.png" alt="" width={18} height={23} />
+              <span>Bharat Radius Guide</span>
             </Link>
-            <nav className="audiences" aria-label="Who is this for">
+            <Search index={index} />
+            <nav className="topnav" aria-label="Who is this for">
               {AUDIENCES.map((a) =>
                 a.ready ? (
-                  <Link key={a.id} href={`/${a.id}/`} className="aud">
+                  <Link key={a.id} href={`/${a.id}/`}>
                     {a.label}
                   </Link>
                 ) : (
-                  <span key={a.id} className="aud aud-soon" aria-disabled="true" title="Coming soon">
-                    {a.label} <small>soon</small>
+                  <span key={a.id} className="soon" aria-disabled="true" title="Coming soon">
+                    {a.label}
+                    <small>Soon</small>
                   </span>
                 ),
               )}
             </nav>
-            <Search index={index} />
-            <DepthToggle />
+            <div className="top-actions">
+              <ThemeToggle />
+            </div>
           </div>
         </header>
         <main id="main">{children}</main>
-        <footer className="foot">Screens shown use sample data. Your panel may show fewer menus, depending on your role.</footer>
+        <footer className="foot">Screens use sample data. Your panel may show fewer menus, depending on your role.</footer>
       </body>
     </html>
   );

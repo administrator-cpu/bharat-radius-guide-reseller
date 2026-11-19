@@ -1,5 +1,6 @@
 'use client';
 import { useCallback, useSyncExternalStore } from 'react';
+import { DEPTH_KEY as KEY } from '@/lib/boot';
 
 export const DEPTHS = [
   { id: 'short', label: 'Short' },
@@ -7,10 +8,7 @@ export const DEPTHS = [
   { id: 'detailed', label: 'Detailed' },
 ] as const;
 type Depth = (typeof DEPTHS)[number]['id'];
-const KEY = 'guide-depth';
 
-/** Runs in <head> before paint so the saved depth applies with no flash or layout shift. */
-export const depthBootScript = `try{var d=localStorage.getItem('${KEY}');if(d==='short'||d==='mid'||d==='detailed')document.documentElement.dataset.depth=d}catch(e){}`;
 
 const listeners = new Set<() => void>();
 const subscribe = (fn: () => void) => {

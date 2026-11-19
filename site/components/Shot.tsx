@@ -31,7 +31,7 @@ function Overlay({ shot, id, scale = 1 }: { shot: ShotData; id: string; scale?: 
           ))}
         </mask>
       </defs>
-      <rect width={W} height={H} fill="rgba(21,36,94,0.38)" mask={`url(#${id})`} />
+      <rect width={W} height={H} className="mk-dim" mask={`url(#${id})`} />
       {marks.map((m) => {
         const cx = Math.max(r + 2, m.x);
         const cy = Math.max(r + 2, m.y);
@@ -51,7 +51,7 @@ function Overlay({ shot, id, scale = 1 }: { shot: ShotData; id: string; scale?: 
 
 /** Screenshot with dimmed background, outlined targets and numbered markers drawn as SVG on top. */
 export function Shot({ shot, labels, title, priority }: Props) {
-  const { width: W, height: H, marks } = shot;
+  const { width: W, height: H } = shot;
   const key = shot.src.replace(/\W/g, '');
   const crop = cropOf(shot);
   const alt = `${title}: ${labels.map((l, i) => `${i + 1}. ${l}`).join(', ')}`;
@@ -70,17 +70,23 @@ export function Shot({ shot, labels, title, priority }: Props) {
         </svg>
         <span className="crop-hint">Tap to see the whole screen</span>
       </a>
-      <figcaption>
-        <ol className="legend">
-          {marks.map((m) => (
-            <li key={m.n} className={`legend-${m.kind}`}>
-              <span className="legend-num">{m.n}</span>
-              <span>{labels[m.n - 1]}</span>
-              <span className="legend-kind">{m.kind === 'click' ? 'click / type' : 'look here'}</span>
-            </li>
-          ))}
-        </ol>
-      </figcaption>
     </figure>
+  );
+}
+
+/** Numbered list matching the markers on the screenshot. */
+export function MarkList({ shot, labels }: { shot: ShotData; labels: string[] }) {
+  return (
+    <ol className="marks">
+      {shot.marks.map((m) => (
+        <li key={m.n} className={`marks-${m.kind}`}>
+          <span className="marks-num" aria-hidden="true">
+            {m.n}
+          </span>
+          <span className="marks-label">{labels[m.n - 1]}</span>
+          <span className="marks-kind">{m.kind === 'click' ? 'Click or type' : 'Look here'}</span>
+        </li>
+      ))}
+    </ol>
   );
 }

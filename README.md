@@ -4,6 +4,10 @@ User guide for the Bharat Radius panel. Every topic has a real screenshot with n
 (orange = click/type, dashed blue = look here), a direct heading, and three lengths of explanation
 the reader switches between at the top: **Short** (10–20 words), **Mid** (20–70), **Detailed** (70–500).
 
+Light and dark themes follow the browser/OS setting automatically (and switch live when it changes). The moon/sun
+button in the top bar overrides it; flipping back to what the browser wants returns to automatic. Theme and depth
+choices are applied by an inline script before first paint, so there is no flash.
+
 ```
 site/       Next.js 16 static site (deploy this folder to Vercel)
 capture/    Screenshot robot: mock API + Playwright script that regenerates every screenshot and mark
