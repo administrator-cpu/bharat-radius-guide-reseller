@@ -1,0 +1,130 @@
+import type { Intent, Lexicon } from './engine';
+
+// Everyday words people type, in English, Hinglish and Hindi, mapped to one canonical word each.
+// Two-word variants ("sign in", "kitna bacha") are matched as a unit.
+const synonyms: Record<string, string[]> = {
+  recharge: ['recharj', 'richarge', 'richarj', 'rechage', 'rechrge', 'renew', 'renewal', 'extend', 'रिचार्ज', 'रीचार्ज'],
+  internet: ['net', 'wifi', 'wi fi', 'broadband', 'connection', 'line', 'नेट', 'इंटरनेट', 'वाईफाई'],
+  slow: ['dheema', 'dheemi', 'dhima', 'dhire', 'dheere', 'lag', 'lagging', 'buffering', 'buffer', 'धीमा', 'स्लो'],
+  money: ['paisa', 'paise', 'pese', 'paisay', 'rupees', 'rupee', 'rupay', 'rupaye', 'rs', 'fund', 'funds', 'cash', 'पैसा', 'पैसे', 'रुपये'],
+  wallet: ['balance', 'bal', 'kitna bacha', 'बैलेंस', 'वॉलेट'],
+  customer: ['subscriber', 'subscribers', 'user', 'users', 'grahak', 'client', 'clients', 'ग्राहक', 'कस्टमर'],
+  bill: ['invoice', 'invoices', 'receipt', 'receipts', 'rasid', 'raseed', 'bills', 'बिल', 'रसीद'],
+  password: ['pass', 'pwd', 'passwd', 'passward', 'pasword', 'पासवर्ड'],
+  login: ['log in', 'signin', 'sign in', 'logon', 'enter', 'लॉगिन'],
+  plan: ['package', 'pack', 'scheme', 'प्लान'],
+  complaint: ['ticket', 'tickets', 'problem', 'issue', 'issues', 'shikayat', 'dikkat', 'pareshani', 'help', 'शिकायत', 'समस्या', 'दिक्कत'],
+  add: ['new', 'create', 'naya', 'nayi', 'naye', 'jodna', 'jode', 'jodo', 'banana', 'banao', 'register', 'नया', 'जोड़ें'],
+  reseller: ['retailer', 'distributor', 'subreseller', 'sub reseller', 'franchise', 'partner', 'dealer', 'agent', 'रीसेलर'],
+  price: ['prices', 'rate', 'rates', 'margin', 'commission', 'profit', 'munafa', 'fayda', 'daam', 'dam', 'keemat', 'kimat', 'cost', 'mrp', 'कीमत', 'दाम'],
+  staff: ['employee', 'employees', 'worker', 'helper', 'team', 'operator', 'स्टाफ'],
+  kyc: ['aadhaar', 'aadhar', 'adhar', 'aadhar card', 'document', 'documents', 'doc', 'docs', 'pan', 'caf', 'proof', 'id proof', 'आधार', 'दस्तावेज'],
+  report: ['reports', 'sales', 'revenue', 'kamai', 'income', 'earning', 'earnings', 'collection', 'collections', 'gst report', 'रिपोर्ट'],
+  ledger: ['history', 'statement', 'transactions', 'transaction', 'passbook', 'hisab', 'hisaab', 'entries', 'हिसाब'],
+  expire: ['expiry', 'expired', 'expiring', 'khatam', 'samapt', 'ending', 'validity', 'valid', 'days left', 'din bache', 'खत्म', 'वैलिडिटी'],
+  online: ['connected', 'live', 'session', 'sessions', 'chalu', 'ऑनलाइन'],
+  kick: ['disconnect', 'drop', 'reconnect', 'restart session', 'hata', 'nikalo'],
+  suspend: ['block', 'pause', 'deactivate', 'disable', 'rok', 'roko', 'rokna'],
+  activate: ['unblock', 'resume', 'enable', 'chalu karo', 'reactivate'],
+  brand: ['logo', 'branding', 'shop name', 'dukan', 'dukaan', 'apna naam'],
+  usage: ['data', 'gb', 'consumption', 'kitna use', 'kitna data', 'used', 'डेटा', 'डाटा'],
+  download: ['pdf', 'print', 'excel', 'export', 'nikalna'],
+  send: ['transfer', 'bhejna', 'bhejo', 'bheje', 'bhej', 'dena', 'load', 'भेजें', 'भेजना'],
+  topup: ['top up', 'top-up', 'refill', 'add money', 'add balance', 'maangna', 'mangna', 'mango'],
+  approve: ['accept', 'manjoor', 'manzoor', 'reject', 'decline', 'pending request'],
+  change: ['switch', 'upgrade', 'downgrade', 'badalna', 'badlo', 'badle', 'bdlna', 'बदलें', 'बदलना'],
+  pay: ['payment', 'upi', 'gpay', 'google pay', 'phonepe', 'paytm', 'bhugtan', 'jama', 'भुगतान', 'पेमेंट'],
+  find: ['search', 'dhundh', 'dhundo', 'dhundna', 'khojna', 'khoj', 'lookup', 'locate', 'खोजें'],
+  dashboard: ['home', 'overview', 'main screen', 'start screen'],
+  twofa: ['2fa', 'two factor', '2 step', 'two step', 'authenticator', 'otp', 'security code'],
+  forgot: ['forget', 'bhool', 'bhul', 'bhool gaya', 'bhul gaya', 'yaad nahi', 'reset', 'भूल'],
+  speed: ['mbps', 'fast', 'faster', 'tez', 'स्पीड'],
+  expensive: ['cheap', 'cheaper', 'sasta', 'mehnga'],
+  reply: ['answer', 'respond', 'jawab', 'जवाब'],
+  shift: ['shifting', 'relocate', 'relocation', 'move house', 'ghar badal', 'new address'],
+  close: ['solve', 'solved', 'resolve', 'resolved', 'theek', 'thik', 'fixed'],
+};
+
+// Filler words that carry no meaning for matching.
+const stopwords = [
+  'how', 'do', 'does', 'did', 'i', 'a', 'an', 'the', 'to', 'my', 'me', 'is', 'are', 'can', 'could', 'what', 'where', 'when',
+  'which', 'who', 'why', 'of', 'for', 'in', 'on', 'at', 'it', 'this', 'that', 'and', 'or', 'with', 'from', 'by', 'be', 'you',
+  'your', 'we', 'our', 'please', 'pls', 'plz', 'want', 'need', 'should', 'will', 'would', 'get', 'go', 'way', 'there',
+  'kaise', 'kese', 'kaisa', 'kaise', 'kya', 'kyu', 'kyon', 'kyun', 'hai', 'he', 'h', 'hain', 'ka', 'ki', 'ke', 'ko', 'mera', 'meri',
+  'mere', 'apna', 'apni', 'karna', 'kare', 'karen', 'karu', 'karun', 'kar', 'krna', 'kre', 'kro', 'karo', 'ho', 'hota', 'hoti',
+  'raha', 'rahi', 'rahe', 'se', 'me', 'mein', 'mai', 'main', 'par', 'pe', 'aur', 'ya', 'bhi', 'ek', 'wala', 'wali', 'chahiye',
+  'chahta', 'chahti', 'batao', 'bataye', 'bataiye', 'sir', 'ji', 'hoga', 'hua', 'gaya', 'gayi', 'diya', 'liya', 'kaha', 'kahan',
+  'kidhar', 'abhi', 'sakta', 'sakte', 'sakti', 'tha', 'thi', 'koi', 'kuch', 'yeh', 'ye', 'woh', 'wo', 'hum', 'ham',
+  'कैसे', 'क्या', 'है', 'का', 'की', 'के', 'को', 'मेरा', 'मेरी', 'मेरे', 'करें', 'करना', 'में', 'से', 'पर', 'और', 'कहाँ', 'हो',
+];
+
+// Extra words per topic (on top of the topic's own title, labels and text).
+export const KEYWORDS: Record<string, string[]> = {
+  // reseller
+  'sign-in': ['login', 'panel login', 'forgot password', 'locked', 'account locked', 'cannot login'],
+  dashboard: ['dashboard', 'summary', 'home screen', 'overview'],
+  'my-account': ['change password', 'twofa', 'security', 'sign out everywhere', 'profile'],
+  'find-customer': ['find customer', 'search customer', 'customer number', 'phone number', 'username'],
+  'add-customer': ['add customer', 'new connection', 'new customer', 'pppoe username', 'create user'],
+  recharge: ['recharge customer', 'customer recharge', 'renew customer', 'extend validity', 'change customer plan'],
+  expiring: ['expire', 'expiring soon', 'renew before expiry', 'due today', 'expire customer'],
+  suspend: ['suspend customer', 'block customer', 'activate customer', 'payment pending'],
+  'online-now': ['online customer', 'kick', 'connected no internet', 'who is online', 'stuck session', 'ip address', 'mac'],
+  kyc: ['kyc', 'upload kyc', 'aadhaar upload', 'caf form', 'id proof upload'],
+  wallet: ['wallet', 'my balance', 'money', 'how much money'],
+  ledger: ['ledger', 'wallet history', 'statement', 'money deducted', 'where money went'],
+  'request-topup': ['topup', 'wallet topup', 'add money wallet', 'ask money', 'low balance', 'insufficient balance', 'balance khatam', 'utr'],
+  'approve-topup': ['approve', 'approve topup', 'sub reseller request', 'reject request'],
+  'send-money': ['send money', 'send reseller', 'transfer reseller', 'load wallet', 'give balance'],
+  'add-sub-reseller': ['add reseller', 'new reseller', 'create reseller', 'sub reseller'],
+  'set-prices': ['price', 'set price', 'reseller price', 'margin', 'commission', 'plan rate'],
+  branding: ['brand', 'logo upload', 'shop name', 'my name customer portal'],
+  'new-ticket': ['complaint', 'customer complaint', 'new ticket', 'log complaint', 'fault'],
+  'reply-ticket': ['reply complaint', 'close complaint', 'resolve ticket', 'internal note'],
+  reports: ['report', 'sales report', 'revenue report', 'gst report', 'download report', 'monthly report'],
+  staff: ['staff', 'staff login', 'employee login', 'add staff', 'team member'],
+  // customer
+  'portal-sign-in': ['login', 'customer number', 'forgot password', 'cannot login', 'welcome sms'],
+  'portal-home': ['expire', 'days left', 'plan status', 'kab tak', 'how many days', 'valid till'],
+  'portal-recharge': ['recharge', 'recharge plan', 'pay online', 'renew plan', 'pay', 'upi recharge'],
+  'portal-change-plan': ['change plan', 'upgrade plan', 'speed', 'faster plan', 'expensive', 'different plan'],
+  'portal-change-plan-confirm': ['change plan pay', 'confirm plan', 'pay switch'],
+  'pay-page': ['expire', 'internet stopped', 'plan expired', 'expired page', 'internet slow expire'],
+  'portal-usage': ['usage', 'how much data', 'data used', 'daily usage', 'fup limit'],
+  'portal-bills': ['bill', 'download bill', 'invoice pdf', 'payment history', 'receipt'],
+  'portal-report-problem': ['complaint', 'internet complaint', 'no internet', 'slow internet', 'red light', 'report problem', 'shift'],
+  'portal-ticket-reply': ['reply', 'complaint status', 'close complaint', 'ticket reply', 'my complaint'],
+  'portal-password': ['change password', 'website password', 'portal password', 'set password'],
+  'portal-kyc': ['kyc', 'upload aadhaar', 'id proof', 'document missing', 'photo upload'],
+};
+
+const NOT_WORKING_HI = /(इंटरनेट|नेट|वाईफाई|वाई फाई).*(नहीं|बंद)/;
+const NOT_WORKING = /(internet|net|wifi|wi fi|नेट|इंटरनेट)\b.*\b(nahi|nhi|nai|band|bandh|not working|down|dead|chal nahi|nahi chal|बंद|नहीं)|\bno internet\b|not working|red light|lal light|light red/;
+
+// Phrase-level intents that single words can't capture.
+const intents: Intent[] = [
+  { audience: 'customer', pattern: NOT_WORKING_HI, boost: { 'portal-report-problem': 8, 'pay-page': 5, 'portal-home': 3 } },
+  { audience: 'reseller', pattern: NOT_WORKING_HI, boost: { 'online-now': 7, 'new-ticket': 4, suspend: 2 } },
+  { audience: 'customer', pattern: NOT_WORKING, boost: { 'portal-report-problem': 8, 'pay-page': 5, 'portal-home': 3 } },
+  { audience: 'reseller', pattern: NOT_WORKING, boost: { 'online-now': 7, 'new-ticket': 4, suspend: 2 } },
+  { audience: 'customer', pattern: /\b(slow|dheema|dheemi|dhima|buffer|lag)/, boost: { 'portal-report-problem': 6, 'portal-usage': 3, 'portal-change-plan': 3 } },
+  { audience: 'reseller', pattern: /\b(slow|dheema|dheemi|dhima|buffer|lag)/, boost: { 'online-now': 4, 'new-ticket': 4, 'reply-ticket': 1 } },
+  { audience: 'customer', pattern: /(\bkat(a|e)? ?(gaya|gya|gaye|gye|gyi|gayi|ge)\b|katt|\bcut\b|deduct|double|twice|do baar|charged)/, boost: { 'portal-bills': 6, 'portal-report-problem': 6 } },
+  { audience: 'reseller', pattern: /(\bkat(a|e)? ?(gaya|gya|gaye|gye|gyi|gayi|ge)\b|katt|deduct|double|twice|do baar|charged|where.*money)/, boost: { ledger: 8, wallet: 3 } },
+  { pattern: /(forgot|forget|bhool|bhul|yaad nahi|reset).*(password|pass|पासवर्ड)|(password|pass).*(forgot|bhool|bhul|yaad nahi)/, boost: { 'sign-in': 6, 'portal-sign-in': 6, 'portal-password': 2, 'my-account': 2 } },
+  { audience: 'customer', pattern: /(kab tak|how many days|kitne din|din bache|valid till|when.*expire)/, boost: { 'portal-home': 8 } },
+  { audience: 'reseller', pattern: /(sub ?reseller|retailer|dealer|franchise).*(add|new|create|naya|banao|jodo)|(add|new|create|naya|banao|jodo).*(sub ?reseller|retailer|dealer|franchise)/, boost: { 'add-sub-reseller': 8 } },
+  { audience: 'reseller', pattern: /(add|new|create|naya|nayi|banao|jodo).*(customer|connection|grahak|user|subscriber)|(customer|connection|grahak|user|subscriber).*(add|new|create|naya|banao|jodo)/, boost: { 'add-customer': 8 } },
+  { audience: 'reseller', pattern: /(sub ?reseller|retailer|dealer).*(money|paisa|paise|balance|send|bhej|transfer)|(send|bhej|transfer).*(sub ?reseller|retailer|dealer)/, boost: { 'send-money': 7, 'approve-topup': 3 } },
+  { audience: 'reseller', pattern: /(my|mera|apna|wallet).*(balance|money|paisa).*(add|top ?up|maang|mang|chahiye|low|kam|khatam)|(top ?up|refill)\b/, boost: { 'request-topup': 7 } },
+  { audience: 'reseller', pattern: /(validity|valid|din|days).*(badha|extend|increase|add)|(badha|extend|increase).*(validity|days)/, boost: { recharge: 8 } },
+  { audience: 'customer', pattern: /(validity|valid|din|days).*(badha|extend|increase|add)|(badha|extend|increase).*(validity|days)/, boost: { 'portal-recharge': 8 } },
+  { audience: 'reseller', pattern: /\bplan\b.*(change|badal|switch|upgrade|downgrade)|(change|badal|switch|upgrade).*\bplan\b/, boost: { recharge: 7 } },
+  { audience: 'customer', pattern: /(fast|faster|tez|speed|mbps).*(chahiye|want|need|badha|increase|more|zyada)|(badha|increase|zyada|more).*(speed|fast)/, boost: { 'portal-change-plan': 8 } },
+  { audience: 'customer', pattern: /(payment|pay|paisa|upi).*(fail|failed|nahi hua|nhi hua|stuck|pending|atak)/, boost: { 'portal-recharge': 8, 'portal-report-problem': 3 } },
+  { audience: 'customer', pattern: /(complaint|ticket|shikayat|शिकायत).*(kya hua|status|update|reply|jawab|response)/, boost: { 'portal-ticket-reply': 7 } },
+  { audience: 'reseller', pattern: /(otp|2fa|two factor|authenticator)/, boost: { 'my-account': 6 } },
+  { audience: 'reseller', pattern: /(kis kis|who|kaun|list|kitne).*(expir|khatam)|(expir|khatam).*(week|today|aaj|kal|tomorrow|soon|list|customers)/, boost: { expiring: 7 } },
+];
+
+export const lexicon: Lexicon = { synonyms, stopwords, intents };

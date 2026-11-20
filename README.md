@@ -13,6 +13,25 @@ site/       Next.js 16 static site (deploy this folder to Vercel)
 capture/    Screenshot robot: mock API + Playwright script that regenerates every screenshot and mark
 ```
 
+## Ask box (free, no AI service)
+
+The **Ask** button (bottom right, or press `?`) answers questions typed in English, Hinglish or Hindi
+("customer ka recharge kaise kare", "net nahi chal raha", "रिचार्ज कैसे करें") with the matching topic, its marked
+screenshot and links. It runs entirely in the reader's browser: no server, no API key, no cost, and it can only
+show text that is already in the guide.
+
+| file | what it is |
+|---|---|
+| `site/lib/ask/engine.ts` | Matcher: synonyms → filler-word removal → typo correction → weighted scoring + phrase intents |
+| `site/lib/ask/lexicon.ts` | Word lists (English / Hinglish / Hindi), extra keywords per topic, phrase intents. Edit this to teach it new words |
+| `site/lib/ask/config.ts` | Optional support phone / WhatsApp / email shown when nothing matches |
+| `site/scripts/check-ask.mjs` | ~85 real-style questions with the expected topic. Run `npm run check:ask` after editing |
+
+The index (`/ask-index.json`, ~30 KB) and the chat code are downloaded only when someone opens the box.
+
+When a question fails: add the missing word as a synonym or topic keyword in `lexicon.ts`, add the question to
+`check-ask.mjs`, and re-run the check.
+
 ## Deploy to Vercel
 
 1. Push this folder to a Git repo (or keep it in the monorepo, e.g. `apps/guide`).

@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import Link from 'next/link';
+import { AskLauncher } from '@/components/AskLauncher';
 import { AudienceNav } from '@/components/AudienceNav';
 import { Search } from '@/components/Search';
 import { ThemeToggle } from '@/components/ThemeToggle';
@@ -49,6 +50,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </header>
         <main id="main">{children}</main>
         <footer className="foot">Screens use sample data. Your panel may show fewer menus, depending on your role.</footer>
+        <AskLauncher />
       </body>
     </html>
   );

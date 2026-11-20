@@ -4,7 +4,7 @@ type Props = { shot: ShotData; labels: string[]; title: string; priority?: boole
 type Box = { x: number; y: number; w: number; h: number };
 
 /** Area around all marks, used as a zoomed view on small screens. */
-function cropOf(shot: ShotData): Box {
+export function cropOf(shot: ShotData): Box {
   const pad = 48;
   let x0 = Math.min(...shot.marks.map((m) => m.x)) - pad;
   let y0 = Math.min(...shot.marks.map((m) => m.y)) - pad;
@@ -18,7 +18,7 @@ function cropOf(shot: ShotData): Box {
   return { x: Math.round(x0), y: Math.round(y0), w: Math.round(x1 - x0), h: Math.round(y1 - y0) };
 }
 
-function Overlay({ shot, id, scale = 1 }: { shot: ShotData; id: string; scale?: number }) {
+export function Overlay({ shot, id, scale = 1 }: { shot: ShotData; id: string; scale?: number }) {
   const { width: W, height: H, marks } = shot;
   const r = 15 * scale;
   return (
