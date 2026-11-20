@@ -15,7 +15,10 @@ capture/    Screenshot robot: mock API + Playwright script that regenerates ever
 
 ## Ask box (free, no AI service)
 
-The **Ask** button (bottom right, or press `?`) answers questions typed in English, Hinglish or Hindi
+Two ways in: type in the top search box with the **Ask** toggle on and press Enter, or use the **Ask** button
+(bottom right, or press `?`). The chat opens as a column on the left and pushes the guide over (full screen on
+phones); it stays open while you move between pages. With the toggle off, Enter in search opens the first result.
+The toggle choice is remembered per browser. It answers questions typed in English, Hinglish or Hindi
 ("customer ka recharge kaise kare", "net nahi chal raha", "रिचार्ज कैसे करें") with the matching topic, its marked
 screenshot and links. It runs entirely in the reader's browser: no server, no API key, no cost, and it can only
 show text that is already in the guide.
@@ -24,6 +27,7 @@ show text that is already in the guide.
 |---|---|
 | `site/lib/ask/engine.ts` | Matcher: synonyms → filler-word removal → typo correction → weighted scoring + phrase intents |
 | `site/lib/ask/lexicon.ts` | Word lists (English / Hinglish / Hindi), extra keywords per topic, phrase intents. Edit this to teach it new words |
+| `site/lib/ask/store.ts` | Shared state between the search box and the chat column (open, toggle, question handed over) |
 | `site/lib/ask/config.ts` | Optional support phone / WhatsApp / email shown when nothing matches |
 | `site/scripts/check-ask.mjs` | ~85 real-style questions with the expected topic. Run `npm run check:ask` after editing |
 

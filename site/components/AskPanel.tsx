@@ -6,6 +6,7 @@ import type { Shot } from '@/content/types';
 import { SUPPORT } from '@/lib/ask/config';
 import { ask, buildIndex, type Answer, type AskDoc, type Index } from '@/lib/ask/engine';
 import { lexicon } from '@/lib/ask/lexicon';
+import { askStore, useAsk } from '@/lib/ask/store';
 import { cropOf, Overlay } from './Shot';
 
 type Data = { audiences: { id: string; label: string }[]; docs: AskDoc[]; shots: Record<string, Shot> };
@@ -133,6 +134,7 @@ export default function AskPanel({ open, onClose }: { open: boolean; onClose: ()
   const input = useRef<HTMLInputElement>(null);
   const list = useRef<HTMLDivElement>(null);
   const seq = useRef(0);
+  const pendingId = useAsk((s) => s.pending?.id ?? 0, 0);
 
   useEffect(() => setAudience(fromPath), [fromPath]);
 
@@ -161,6 +163,13 @@ export default function AskPanel({ open, onClose }: { open: boolean; onClose: ()
     setMsgs((m) => [...m.slice(-18), { id: ++seq.current, role: 'user', text: t }, { id: ++seq.current, role: 'bot', answer, audience }]);
     setQ('');
   };
+  useEffect(() => {
+    if (!state || !pendingId) return;
+    const p = askStore.takePending();
+    if (p) send(p.text);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [state, pendingId]);
+
   const onSubmit = (e: FormEvent) => {
     e.preventDefault();
     send(q);

@@ -1,22 +1,21 @@
 'use client';
 import dynamic from 'next/dynamic';
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect } from 'react';
+import { askStore, useAsk } from '@/lib/ask/store';
 
 const load = () => import('./AskPanel');
 const AskPanel = dynamic(load, { ssr: false, loading: () => <div className="ask-panel ask-skeleton" aria-hidden="true" /> });
 
-/** Floating "Ask" button. The chat panel's code and data are only downloaded the first time it opens. */
+/** Floating "Ask" button + the chat column. Chat code and data download only the first time it opens. */
 export function AskLauncher() {
-  const [opened, setOpened] = useState(false);
-  const [open, setOpen] = useState(false);
-  const close = useCallback(() => setOpen(false), []);
+  const opened = useAsk((s) => s.opened, false);
+  const open = useAsk((s) => s.open, false);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === '?' && !/INPUT|TEXTAREA/.test(document.activeElement?.tagName ?? '')) {
         e.preventDefault();
-        setOpened(true);
-        setOpen(true);
+        askStore.openPanel();
       }
     };
     window.addEventListener('keydown', onKey);
@@ -25,7 +24,7 @@ export function AskLauncher() {
 
   return (
     <>
-      {opened ? <AskPanel open={open} onClose={close} /> : null}
+      {opened ? <AskPanel open={open} onClose={askStore.close} /> : null}
       <button
         type="button"
         className="ask-fab"
@@ -33,10 +32,7 @@ export function AskLauncher() {
         aria-label={open ? 'Close help chat' : 'Ask a question'}
         onPointerEnter={() => void load()}
         onFocus={() => void load()}
-        onClick={() => {
-          setOpened(true);
-          setOpen((o) => !o);
-        }}
+        onClick={askStore.toggle}
       >
         {open ? (
           <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
