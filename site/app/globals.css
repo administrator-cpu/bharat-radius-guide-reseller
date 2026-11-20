@@ -235,10 +235,10 @@ html[data-depth='detailed'] .d-short, html[data-depth='detailed'] .d-mid { displ
 .ask-fab { position: fixed; right: 20px; bottom: 20px; z-index: 30; display: inline-flex; align-items: center; gap: 8px; height: 46px; padding: 0 18px; border: 0; border-radius: 999px; background: var(--solid); color: var(--solid-fg); font: 600 14px var(--font); cursor: pointer; box-shadow: 0 6px 20px rgba(0,0,0,.18); }
 .ask-fab[aria-expanded='true'] { width: 46px; padding: 0; justify-content: center; }
 .ask-fab:hover { opacity: .92; }
-.ask-panel { position: fixed; left: 0; top: var(--top); bottom: 0; z-index: 9; width: var(--ask-w); display: flex; flex-direction: column; background: var(--card); color: var(--body); border-right: 1px solid var(--border); overflow: hidden; }
+.ask-panel { position: fixed; right: 0; top: var(--top); bottom: 0; z-index: 9; width: var(--ask-w); display: flex; flex-direction: column; background: var(--card); color: var(--body); border-left: 1px solid var(--border); overflow: hidden; }
 :root { --ask-w: 400px; }
 @media (min-width: 861px) {
-  html[data-ask='open'] main, html[data-ask='open'] .foot { margin-left: var(--ask-w); }
+  html[data-ask='open'] main, html[data-ask='open'] .foot { margin-right: var(--ask-w); }
   html[data-ask='open'] .docs { grid-template-columns: 256px minmax(0, 1fr); }
   html[data-ask='open'] .rail { display: none; }
   html[data-ask='open'] .ask-fab { display: none; }

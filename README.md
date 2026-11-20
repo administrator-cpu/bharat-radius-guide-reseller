@@ -16,7 +16,7 @@ capture/    Screenshot robot: mock API + Playwright script that regenerates ever
 ## Ask box (free, no AI service)
 
 Two ways in: type in the top search box with the **Ask** toggle on and press Enter, or use the **Ask** button
-(bottom right, or press `?`). The chat opens as a column on the left and pushes the guide over (full screen on
+(bottom right, or press `?`). The chat opens as a column on the right and pushes the guide over (full screen on
 phones); it stays open while you move between pages. With the toggle off, Enter in search opens the first result.
 The toggle choice is remembered per browser. It answers questions typed in English, Hinglish or Hindi
 ("customer ka recharge kaise kare", "net nahi chal raha", "रिचार्ज कैसे करें") with the matching topic, its marked
